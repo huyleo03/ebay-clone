@@ -1,0 +1,356 @@
+[{
+  "_id": {
+    "$oid": "68027029be136378e6bb2f98"
+  },
+  "userId": {
+    "$oid": "68026fd3be136378e6bb2f8f"
+  },
+  "fullname": "Tran Danh Thuc",
+  "phone": "0387029603",
+  "street": "Ngo Gia Tu Street, Tien An Ward",
+  "city": "Bắc Ninh",
+  "state": "Bac Ninh",
+  "country": "Việt Nam",
+  "isDefault": false,
+  "createdAt": {
+    "$date": "2025-04-18T15:30:49.205Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-20T12:10:58.462Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6706c540be090ec1c08abf90"
+  },
+  "userId": {
+    "$oid": "6706c540be090ec1c08abf88"
+  },
+  "fullName": "Trần Thị B",
+  "phone": "0987654321",
+  "street": "456 Đường XYZ",
+  "city": "Hồ Chí Minh",
+  "state": "Quận 1",
+  "country": "Việt Nam",
+  "isDefault": true
+},
+{
+  "_id": {
+    "$oid": "6706c540be090ec1c08abf89"
+  },
+  "userId": {
+    "$oid": "6706c540be090ec1c08abf87"
+  },
+  "fullName": "Nguyễn Văn A",
+  "phone": "0123456789",
+  "street": "123 Đường ABC",
+  "city": "Hà Nội",
+  "state": "Cầu Giấy",
+  "country": "Việt Nam",
+  "isDefault": true
+},
+{
+  "_id": {
+    "$oid": "680483056a191861a614554f"
+  },
+  "userId": {
+    "$oid": "6706c540be090ec1c08abf87"
+  },
+  "fullName": "Test User",
+  "phone": "0123456789",
+  "street": "Test Street",
+  "city": "Test City",
+  "state": "Test State",
+  "country": "Test Country",
+  "isDefault": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680483f26a191861a61469d9"
+  },
+  "userId": {
+    "$oid": "6706c540be090ec1c08abf88"
+  },
+  "fullName": "Test User",
+  "phone": "0123456789",
+  "street": "Test Street",
+  "city": "Test City",
+  "state": "Test State",
+  "country": "Test Country",
+  "isDefault": false,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6804e44f4235c27e9affec8a"
+  },
+  "userId": {
+    "$oid": "68026fd3be136378e6bb2f8f"
+  },
+  "fullname": "Thực",
+  "phone": "23124",
+  "street": "Đại Lai - Gia Bình",
+  "city": "Bắc Ninh",
+  "state": "Bac Ninh",
+  "country": "Việt Nam",
+  "isDefault": true,
+  "createdAt": {
+    "$date": "2025-04-20T12:10:55.298Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-20T12:10:58.511Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6808f07470d8b580aa41c0df"
+  },
+  "userId": {
+    "$oid": "6808f04070d8b580aa41c0d9"
+  },
+  "fullname": "Tran Danh Thuc",
+  "phone": "0387029603",
+  "street": "Ngo Gia Tu Street, Tien An Ward",
+  "city": "Bắc Ninh",
+  "state": "Bac Ninh",
+  "country": "Việt Nam",
+  "isDefault": false,
+  "createdAt": {
+    "$date": "2025-04-23T13:51:48.580Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-23T14:20:00.116Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6808f07b70d8b580aa41c0e2"
+  },
+  "userId": {
+    "$oid": "6808f04070d8b580aa41c0d9"
+  },
+  "fullname": "demo",
+  "phone": "23124",
+  "street": "Ngo Gia Tu Street, Tien An Ward",
+  "city": "Bắc Ninh",
+  "state": "Bac Ninh",
+  "country": "Việt Nam",
+  "isDefault": true,
+  "createdAt": {
+    "$date": "2025-04-23T13:51:55.661Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-23T14:20:00.118Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680c6ea9e87853934039005c"
+  },
+  "userId": {
+    "$oid": "680c6ea9e87853934039005b"
+  },
+  "phone": "0123456789",
+  "street": "123 Đường ABC, Phường XYZ",
+  "city": "Hà Nội",
+  "state": "Cầu Giấy",
+  "country": "Việt Nam",
+  "isDefault": true,
+  "fullname": "Nguyễn Văn A"
+},
+{
+  "_id": {
+    "$oid": "680c6ea9e87853934039005e"
+  },
+  "userId": {
+    "$oid": "680c6ea9e87853934039005b"
+  },
+  "phone": "0369852147",
+  "street": "789 Đường GHI, Phường RST",
+  "city": "Đà Nẵng",
+  "state": "Hải Châu",
+  "country": "Việt Nam",
+  "isDefault": false,
+  "fullname": "Lê Văn C"
+},
+{
+  "_id": {
+    "$oid": "680cb89d61882ed7de0360f5"
+  },
+  "userId": {
+    "$oid": "680cb5a261882ed7de035ec3"
+  },
+  "fullname": "phạm",
+  "phone": "0981302003",
+  "street": "Hà nội",
+  "city": "Hà nội",
+  "state": "cầu giấy",
+  "country": "Việt Nam",
+  "isDefault": true,
+  "createdAt": {
+    "$date": "2025-04-26T10:42:37.750Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T10:42:37.750Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680ced6ddb035bcca1c3166a"
+  },
+  "userId": {
+    "$oid": "680ced4edb035bcca1c3165f"
+  },
+  "fullname": "phạm",
+  "phone": "0981302003",
+  "street": "Hà nội",
+  "city": "Hà nội",
+  "state": "cầu giấy",
+  "country": "Việt Nam",
+  "isDefault": false,
+  "createdAt": {
+    "$date": "2025-04-26T14:27:57.703Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T14:28:15.355Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680ced7adb035bcca1c3166d"
+  },
+  "userId": {
+    "$oid": "680ced4edb035bcca1c3165f"
+  },
+  "fullname": "phạm",
+  "phone": "0981302003",
+  "street": "Hà nội",
+  "city": "Hà nội",
+  "state": "aaaa",
+  "country": "Việt Nam",
+  "isDefault": true,
+  "createdAt": {
+    "$date": "2025-04-26T14:28:10.951Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T14:28:15.407Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680cf2363d15306413274196"
+  },
+  "userId": {
+    "$oid": "6808f84227d657243572731a"
+  },
+  "fullname": "phạm",
+  "phone": "0981302003",
+  "street": "Hà nội",
+  "city": "Hà nội",
+  "state": "cầu giấy",
+  "country": "Việt Nam",
+  "isDefault": true,
+  "createdAt": {
+    "$date": "2025-04-26T14:48:22.679Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T14:48:22.679Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680daff1e98effa7b5985a45"
+  },
+  "userId": {
+    "$oid": "680d20f531feca4b0ce7b2dd"
+  },
+  "fullname": "Le Quang Trung",
+  "phone": "0973398990",
+  "street": "Tuong",
+  "city": "Ha Noi",
+  "state": "Ha Noi",
+  "country": "Viet Nam",
+  "isDefault": true,
+  "createdAt": {
+    "$date": "2025-04-27T04:17:53.950Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-27T04:17:53.950Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680dcbd7084ebda7a82259e2"
+  },
+  "userId": {
+    "$oid": "680dc9937ed57e80f1bb3b32"
+  },
+  "fullname": "Danh Thuc",
+  "phone": "0387029603",
+  "street": "123",
+  "city": "BN",
+  "state": "HN",
+  "country": "VN",
+  "isDefault": true,
+  "createdAt": {
+    "$date": "2025-04-27T06:16:55.895Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-27T06:16:55.895Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680dcddeb47ca4123e704e77"
+  },
+  "userId": {
+    "$oid": "6808f04070d8b580aa41c0d9"
+  },
+  "fullname": "phạm",
+  "phone": "0981302003",
+  "street": "Hà nội",
+  "city": "Hà nội",
+  "state": "mỹ đình",
+  "country": "Việt Nam",
+  "isDefault": false,
+  "createdAt": {
+    "$date": "2025-04-27T06:25:34.500Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-23T14:20:00.116Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6880f262783ce81a7dfe13a1"
+  },
+  "userId": {
+    "$oid": "6880e90e783ce81a7dfd96f2"
+  },
+  "fullname": "Huy Gia Nguyen",
+  "phone": "0969140803",
+  "street": "19/165",
+  "city": "Kim Liên",
+  "state": "Hà Nội",
+  "country": "Vietnam",
+  "isDefault": true,
+  "createdAt": {
+    "$date": "2025-07-23T14:32:02.387Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-23T14:32:02.387Z"
+  },
+  "__v": 0
+}]

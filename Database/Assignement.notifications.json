@@ -1,0 +1,64 @@
+[{
+  "_id": {
+    "$oid": "680c6caadc87594fc157d432"
+  },
+  "userId": {
+    "$oid": "6880e90e783ce81a7dfd96f2"
+  },
+  "title": "New Product Launch",
+  "message": "Check out our latest product now available!",
+  "read": true,
+  "type": "product",
+  "link": "/products/new",
+  "updatedAt": {
+    "$date": "2025-04-27T06:21:23.345Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "680c6caadc87594fc157d433"
+  },
+  "userId": {
+    "$oid": "6808f84227d657243572731a"
+  },
+  "title": "System Maintenance",
+  "message": "We'll be down for maintenance from 12 AM to 2 AM.",
+  "read": true,
+  "type": "system",
+  "link": null,
+  "updatedAt": {
+    "$date": "2025-04-27T06:21:23.345Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "680c6caadc87594fc157d434"
+  },
+  "userId": {
+    "$oid": "6808f84227d657243572731a"
+  },
+  "title": "Flash Sale!",
+  "message": "Get 50% off on selected items for the next 2 hours.",
+  "read": true,
+  "type": "promotion",
+  "link": "/deals/flash-sale",
+  "updatedAt": {
+    "$date": "2025-04-27T06:21:23.345Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "680c6caadc87594fc157d435"
+  },
+  "userId": {
+    "$oid": "6808f84227d657243572731a"
+  },
+  "title": "New Feature Update",
+  "message": "We added a new feature to improve your experience.",
+  "read": true,
+  "type": "other",
+  "link": "/features/update",
+  "updatedAt": {
+    "$date": "2025-04-27T06:21:23.345Z"
+  }
+}]

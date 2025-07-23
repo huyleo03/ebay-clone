@@ -1,0 +1,33 @@
+[{
+  "_id": {
+    "$oid": "680b2d61589ae933eca2a794"
+  },
+  "code": "LAPTOP10",
+  "discountPercent": 10,
+  "startDate": "2025-04-25T00:00:00.000Z",
+  "endDate": "2026-05-25T23:59:59.000Z",
+  "maxUsage": 100,
+  "productId": "6804bba65228536e85df02ce"
+},
+{
+  "_id": {
+    "$oid": "680b2d61589ae933eca2a795"
+  },
+  "code": "DESKLAMP15",
+  "discountPercent": 15,
+  "startDate": "2025-04-25T00:00:00.000Z",
+  "endDate": "2026-05-10T23:59:59.000Z",
+  "maxUsage": 50,
+  "productId": "6804bba65228536e85df02d1"
+},
+{
+  "_id": {
+    "$oid": "680b2d61589ae933eca2a796"
+  },
+  "code": "SPEAKER20",
+  "discountPercent": 20,
+  "startDate": "2025-04-25T00:00:00.000Z",
+  "endDate": "2025-05-30T23:59:59.000Z",
+  "maxUsage": 30,
+  "productId": "6804bba65228536e85df02d3"
+}]

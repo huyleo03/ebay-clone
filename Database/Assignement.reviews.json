@@ -1,0 +1,208 @@
+[{
+  "_id": {
+    "$oid": "68020765e641279583291de8"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616942"
+  },
+  "reviewerId": {
+    "$oid": "6801fda5e641279583291dc4"
+  },
+  "rating": 4,
+  "comment": "Amazing leather bag, very durable and stylish!",
+  "createdAt": "2025-04-18T10:00:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020765e641279583291de9"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616943"
+  },
+  "reviewerId": {
+    "$oid": "507f191e810c19729de860eb"
+  },
+  "rating": 3,
+  "comment": "Vintage camera is cool, but it takes time to get used to the manual controls.",
+  "createdAt": "2025-04-17T15:30:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020765e641279583291dea"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616944"
+  },
+  "reviewerId": {
+    "$oid": "507f191e810c19729de860ec"
+  },
+  "rating": 5,
+  "comment": "This laptop is a beast! Super fast and great for work.",
+  "createdAt": "2025-04-16T09:20:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020765e641279583291deb"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616945"
+  },
+  "reviewerId": {
+    "$oid": "507f191e810c19729de860ed"
+  },
+  "rating": 2,
+  "comment": "Headphones sound good, but the noise cancellation isn't as strong as expected.",
+  "createdAt": "2025-04-15T12:45:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020765e641279583291dec"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616946"
+  },
+  "reviewerId": {
+    "$oid": "507f191e810c19729de860ee"
+  },
+  "rating": 4,
+  "comment": "Ceramic mug has a unique design, love using it every morning.",
+  "createdAt": "2025-04-14T18:10:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020765e641279583291ded"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616947"
+  },
+  "reviewerId": {
+    "$oid": "507f191e810c19729de860ef"
+  },
+  "rating": 3,
+  "comment": "Desk lamp is decent, but I wish it had more brightness options.",
+  "createdAt": "2025-04-13T14:20:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020765e641279583291dee"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616948"
+  },
+  "reviewerId": {
+    "$oid": "507f191e810c19729de860f0"
+  },
+  "rating": 5,
+  "comment": "Fitness watch tracks everything accurately, highly recommend!",
+  "createdAt": "2025-04-12T11:30:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020765e641279583291def"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616949"
+  },
+  "reviewerId": {
+    "$oid": "507f191e810c19729de860f1"
+  },
+  "rating": 4,
+  "comment": "Portable speaker has great sound and is easy to carry around.",
+  "createdAt": "2025-04-11T16:50:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020765e641279583291df0"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d61694a"
+  },
+  "reviewerId": {
+    "$oid": "507f191e810c19729de860f2"
+  },
+  "rating": 3,
+  "comment": "Leather wallet is sleek, but it could use more compartments.",
+  "createdAt": "2025-04-10T09:15:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020765e641279583291df1"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d61694b"
+  },
+  "reviewerId": {
+    "$oid": "507f191e810c19729de860f3"
+  },
+  "rating": 4,
+  "comment": "Denim jacket is trendy and fits perfectly, great buy!",
+  "createdAt": "2025-04-09T13:40:00.000Z"
+},
+{
+  "_id": {
+    "$oid": "68020ebd6ec6202d51d0c41d"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616942"
+  },
+  "rating": 5,
+  "comment": "This leather bag is fantastic! Super durable and looks premium.",
+  "createdAt": {
+    "$date": "2025-04-18T08:35:09.898Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-18T08:35:09.898Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6802109a6ec6202d51d0c465"
+  },
+  "productId": {
+    "$oid": "6801ee3b608e45c74d616942"
+  },
+  "rating": 2,
+  "comment": "Amazing",
+  "createdAt": {
+    "$date": "2025-04-18T08:43:06.542Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-18T08:43:06.542Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680ca7ccc0e11cbd911ef008"
+  },
+  "productId": {
+    "$oid": "6804bba65228536e85df02ce"
+  },
+  "rating": 5,
+  "comment": "df",
+  "createdAt": {
+    "$date": "2025-04-26T09:30:52.495Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T09:30:57.255Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6880f5f4d3cf1bec2a0284f3"
+  },
+  "productId": {
+    "$oid": "6804bba65228536e85df02d1"
+  },
+  "rating": 5,
+  "comment": "haha",
+  "createdAt": {
+    "$date": "2025-07-23T14:47:16.697Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-23T14:47:16.697Z"
+  },
+  "__v": 0
+}]

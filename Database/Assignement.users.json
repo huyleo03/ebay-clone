@@ -1,0 +1,217 @@
+[{
+  "_id": {
+    "$oid": "6706c540be090ec1c08abf87"
+  },
+  "username": "nguyenvana",
+  "email": "user1@example.com",
+  "password": "123456",
+  "role": "user",
+  "avatarURL": "https://example.com/avatars/user1.jpg"
+},
+{
+  "_id": {
+    "$oid": "6706c540be090ec1c08abf88"
+  },
+  "username": "tranthib",
+  "email": "user2@example.com",
+  "password": "123456",
+  "role": "user",
+  "avatarURL": "https://example.com/avatars/user2.jpg"
+},
+{
+  "_id": {
+    "$oid": "6808f04070d8b580aa41c0d9"
+  },
+  "username": "thuctd",
+  "email": "thuctrandanh93@gmail.com",
+  "password": "$2b$10$dTC3wKTijgDBI7R/dPYtaek7m5Q4r6cCGK1HJtu7LGUYxjB12619y",
+  "role": "user",
+  "avatarURL": "",
+  "isVerified": true,
+  "verificationToken": null,
+  "action": "unlock",
+  "createdAt": {
+    "$date": "2025-04-23T13:50:56.668Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-23T13:51:13.191Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6808f09f70d8b580aa41c0e9"
+  },
+  "username": "Tran Danh Thuc",
+  "email": "thuctdhe171729@fpt.edu.vn",
+  "password": "",
+  "role": "user",
+  "avatarURL": "https://lh3.googleusercontent.com/a/ACg8ocJzajYbUDT3Krl2YSdEr-C-ZQqsgpMbNa9pyzfz6q37qVf31U8=s96-c",
+  "isVerified": true,
+  "action": "unlock",
+  "createdAt": {
+    "$date": "2025-04-23T13:52:31.040Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-23T13:52:31.040Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6808f84227d657243572731a"
+  },
+  "username": "trunglq",
+  "email": "trunglqhe172533@fpt.edu.vn",
+  "password": "$2b$10$8RKiT84z9AXtll/qGsBYoukIqjpzgS5Q/rZpncZLOeesz7tUCVXDu",
+  "role": "user",
+  "avatarURL": "",
+  "isVerified": true,
+  "verificationToken": null,
+  "action": "unlock",
+  "createdAt": {
+    "$date": "2025-04-23T14:25:06.425Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-23T14:25:21.302Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680c6aecce071655b0ed65d9"
+  },
+  "username": "phamminh",
+  "email": "minh92419@gmail.com",
+  "password": "$2b$10$J1yAH11mykpnFJqCgCFGue8ekGLtdfeknfPgHvE0b18IRtmTVjZ5O",
+  "role": "user",
+  "avatarURL": "",
+  "isVerified": true,
+  "verificationToken": null,
+  "action": "unlock",
+  "createdAt": {
+    "$date": "2025-04-26T05:11:08.488Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T05:11:26.983Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680c6e57e878539340390056"
+  },
+  "username": "user1a",
+  "email": "test1@gmail.com",
+  "password": "$2b$10$swpK7cjWiJTxmT1dMtVrbu/5kIUgHkA75GdzG1An/.jxnR0h7UbPe",
+  "role": "user",
+  "avatarURL": "",
+  "isVerified": false,
+  "verificationToken": "477819",
+  "action": "lock",
+  "createdAt": {
+    "$date": "2025-04-26T05:25:43.653Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T05:25:43.653Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680c6ea9e87853934039005b"
+  },
+  "username": "hoangnd",
+  "email": "hoangndhe161694@fpt.edu.vn",
+  "password": "$2b$10$Zw4wdTsKQwS2RKF4f5zyQu2SAj6NxlNqKGEVWcr1rx0dy7F3ZS1Rq",
+  "role": "user",
+  "avatarURL": "",
+  "isVerified": true,
+  "verificationToken": null,
+  "action": "unlock",
+  "createdAt": {
+    "$date": "2025-04-26T05:27:05.712Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T05:27:22.610Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680cb5a261882ed7de035ec3"
+  },
+  "username": "phạm quang minh k17 HL",
+  "email": "minhpqhe173298@fpt.edu.vn",
+  "password": "",
+  "role": "user",
+  "avatarURL": "https://lh3.googleusercontent.com/a/ACg8ocIV9XJQ6-2UmTOyvcpySlt8Mfpih40488vuPQfR3Qu9gq0loQ=s96-c",
+  "isVerified": true,
+  "action": "unlock",
+  "createdAt": {
+    "$date": "2025-04-26T10:29:54.915Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T10:29:54.915Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680ced4edb035bcca1c3165f"
+  },
+  "username": "minhpham",
+  "email": "chiennxhe176221@fpt.edu.vn",
+  "password": "$2b$10$14btVk.c0oLIn7bU1Dg17.cZoL1RDSR2bzGnvG6jSC7m1/IvzUblu",
+  "role": "user",
+  "avatarURL": "",
+  "isVerified": true,
+  "verificationToken": null,
+  "action": "unlock",
+  "createdAt": {
+    "$date": "2025-04-26T14:27:26.845Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T14:27:45.106Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680d20f531feca4b0ce7b2dd"
+  },
+  "username": "trung",
+  "email": "rerollchotrung@gmail.com",
+  "password": "$2b$10$UGKDe6c3aUGf1MWBbfhONOhtc.5HZJ0I3DRx55oxxqHpXC3gSwXqq",
+  "role": "user",
+  "avatarURL": "",
+  "isVerified": true,
+  "verificationToken": null,
+  "action": "unlock",
+  "createdAt": {
+    "$date": "2025-04-26T18:07:49.375Z"
+  },
+  "updatedAt": {
+    "$date": "2025-04-26T18:08:07.451Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6880e90e783ce81a7dfd96f2"
+  },
+  "username": "giahuy nguyen",
+  "email": "giahuyn495@gmail.com",
+  "password": "",
+  "role": "user",
+  "avatarURL": "https://lh3.googleusercontent.com/a/ACg8ocIlbrJtq4hhKJeSSOJN8uUG4sVohSdyO4TTloY4YsiIKt9_P0c=s96-c",
+  "isVerified": true,
+  "action": "unlock",
+  "createdAt": {
+    "$date": "2025-07-23T13:52:14.784Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-23T13:52:14.784Z"
+  },
+  "__v": 0
+}]
