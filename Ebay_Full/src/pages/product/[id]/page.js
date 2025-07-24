@@ -304,6 +304,24 @@ export default function ProductDetail() {
       alert("Failed to place bid: " + error.message);
     }
   };
+const handleBuyItNow = () => {
+  if (!currentUser) {
+    alert("Please login to buy now");
+    navigate("/auth");
+    return;
+  }
+  const buyNowProduct = {
+    id: product._id || product.id,
+    title: product.title,
+    description: product.description || "",
+    // Giá buy now là số thực (ví dụ: 24.99), checkout sẽ tự nhân 100 nếu cần
+    price: ((product.price * 1.2) / 100),
+    image: Array.isArray(product.images) ? product.images[0] : (product.images || product.image || "/placeholder.jpg"),
+    quantity: 1,
+    availableStock: product.quantity || 100
+  };
+  navigate("/checkout", { state: { items: [buyNowProduct], buyNow: true } });
+};
 
   // Toggle wishlist status
   const toggleWishlist = () => {
@@ -584,9 +602,12 @@ export default function ProductDetail() {
                               ]
                             </div>
                           </div>
-                          <button className="bg-[#0053A0] hover:bg-[#00438A] text-white py-2 px-6 font-medium">
-                            Buy it now
-                          </button>
+                            <button
+                              onClick={handleBuyItNow}
+                              className="bg-[#0053A0] hover:bg-[#00438A] text-white py-2 px-6 font-medium"
+                            >
+                              Buy it now
+                            </button>
                         </div>
 
                         <div className="flex items-center text-xs text-[#0053A0] mt-2">
