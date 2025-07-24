@@ -234,7 +234,9 @@ router.patch("/:id/cancel", async (req, res) => {
 });
 
 router.post("/create", async (req, res) => {
-  const { buyerId, addressId, items } = req.body;
+  const { buyerId, addressId, items, shippingMethod } = req.body;
+
+  const feeShipping = shippingMethod === "standard" ? 500 : 1500;
 
   try {
     if (!buyerId || !addressId || !items || !Array.isArray(items) || items.length === 0) {
@@ -242,13 +244,13 @@ router.post("/create", async (req, res) => {
     }
 
     // Validate buyerId
-    const buyer = await db.User.findById(buyerId); // Bỏ .session(session)
+    const buyer = await db.User.findById(buyerId);
     if (!buyer) {
       throw new Error("Người mua không tồn tại");
     }
 
     // Validate addressId
-    const address = await db.Address.findOne({ _id: addressId, userId: buyerId }); // Bỏ .session(session)
+    const address = await db.Address.findOne({ _id: addressId, userId: buyerId });
     if (!address) {
       throw new Error("Địa chỉ không tồn tại hoặc không thuộc về người mua");
     }
@@ -259,7 +261,7 @@ router.post("/create", async (req, res) => {
           throw new Error("Thông tin sản phẩm không hợp lệ");
         }
 
-        const product = await db.Product.findById(item.productId); // Bỏ .session(session)
+        const product = await db.Product.findById(item.productId);
         if (!product) {
           throw new Error(`Sản phẩm với ID ${item.productId} không tồn tại`);
         }
@@ -277,23 +279,25 @@ router.post("/create", async (req, res) => {
       })
     );
 
-    const totalAmount = orderItems
-      .reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
-      .toFixed(2);
+    const totalAmount = orderItems.reduce(
+      (acc, item) => acc + item.unitPrice * item.quantity,
+      0
+    );
+    const totalPrice = ((totalAmount + feeShipping) / 100).toFixed(2);
 
     const request = new paypal.orders.OrdersCreateRequest();
     request.prefer("return=representation");
     request.requestBody({
       intent: "CAPTURE",
       application_context: {
-        return_url: `http://localhost:9999/orders/success`, // Make sure the token is sent here
+        return_url: `http://localhost:9999/orders/success`,
         cancel_url: "http://localhost:9999/orders/cancel",
       },
       purchase_units: [
         {
           amount: {
             currency_code: "USD",
-            value: totalAmount/100,
+            value: totalAmount / 100,
           },
         },
       ],
@@ -305,32 +309,27 @@ router.post("/create", async (req, res) => {
       throw new Error("Lỗi khi tạo đơn hàng PayPal");
     }
 
-    const newOrder = await db.Order.create(
-      [
-        {
-          buyerId: new mongoose.Types.ObjectId(buyerId),
-          addressId: new mongoose.Types.ObjectId(addressId),
-          orderDate: new Date(),
-          totalPrice: totalAmount,
-          status: "shipping",
-          paypalOrderId: paypalOrder.result.id,
-          items: orderItems.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-          })), // Thêm dòng này
-        },
-      ]
-    );
-    
+    const newOrder = await db.Order.create({
+      buyerId: new mongoose.Types.ObjectId(buyerId),
+      addressId: new mongoose.Types.ObjectId(addressId),
+      orderDate: new Date(),
+      totalPrice: totalPrice,
+      status: "shipping",
+      paypalOrderId: paypalOrder.result.id,
+      items: orderItems.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      })),
+    });
 
+    // Lưu các orderItem
     await Promise.all(
       orderItems.map(async (item) => {
-        item.orderId = newOrder[0]._id;
-        await item.save(); // Bỏ { session }
+        item.orderId = newOrder._id;
+        await item.save();
       })
     );
-
 
     const approvalUrl = paypalOrder.result.links.find(
       (link) => link.rel === "approve"
@@ -338,7 +337,7 @@ router.post("/create", async (req, res) => {
 
     res.status(200).json({
       message: "Đã tạo đơn hàng thành công",
-      order_id: newOrder[0]._id,
+      order_id: newOrder._id,
       paypal_order_id: paypalOrder.result.id,
       approvalUrl,
     });
@@ -403,69 +402,69 @@ router.get("/success", async (req, res) => {
 });
 
 
-router.get("/success", async (req, res) => {
-  const { token, PayerID } = req.query;
+// router.get("/success", async (req, res) => {
+//   const { token, PayerID } = req.query;
 
-  if (!token || !PayerID) {
-    return res.status(400).json({ message: "Thiếu thông tin PayPal" });
-  }
+//   if (!token || !PayerID) {
+//     return res.status(400).json({ message: "Thiếu thông tin PayPal" });
+//   }
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
 
-  try {
-    console.log("PayPal Token:", token);
+//   try {
+//     console.log("PayPal Token:", token);
 
-    const order = await db.Order.findOne({ paypalOrderId: token }).session(session);
-    if (!order) throw new Error("Không tìm thấy đơn hàng tương ứng");
+//     const order = await db.Order.findOne({ paypalOrderId: token }).session(session);
+//     if (!order) throw new Error("Không tìm thấy đơn hàng tương ứng");
 
-    if (order.status !== "shipping") {
-      throw new Error("Đơn hàng đã được xử lý hoặc có trạng thái không hợp lệ");
-    }
+//     if (order.status !== "shipping") {
+//       throw new Error("Đơn hàng đã được xử lý hoặc có trạng thái không hợp lệ");
+//     }
 
-    const orderItems = await db.OrderItem.find({ orderId: order._id })
-      .populate('productId', 'title price images')
-      .session(session);
-    if (!orderItems || orderItems.length === 0) {
-      throw new Error("Không tìm thấy sản phẩm nào trong đơn hàng");
-    }
+//     const orderItems = await db.OrderItem.find({ orderId: order._id })
+//       .populate('productId', 'title price images')
+//       .session(session);
+//     if (!orderItems || orderItems.length === 0) {
+//       throw new Error("Không tìm thấy sản phẩm nào trong đơn hàng");
+//     }
 
-    console.log("Fetched OrderItems in /success:", orderItems);
+//     console.log("Fetched OrderItems in /success:", orderItems);
 
-    for (const item of orderItems) {
-      const product = await db.Product.findById(item.productId).session(session);
-      if (!product) throw new Error(`Sản phẩm ID ${item.productId} không tồn tại`);
+//     for (const item of orderItems) {
+//       const product = await db.Product.findById(item.productId).session(session);
+//       if (!product) throw new Error(`Sản phẩm ID ${item.productId} không tồn tại`);
 
-      if (product.quantity < item.quantity) {
-        throw new Error(
-          `Không đủ hàng cho sản phẩm ${product.name}. Còn: ${product.quantity}, yêu cầu: ${item.quantity}`
-        );
-      }
+//       if (product.quantity < item.quantity) {
+//         throw new Error(
+//           `Không đủ hàng cho sản phẩm ${product.name}. Còn: ${product.quantity}, yêu cầu: ${item.quantity}`
+//         );
+//       }
 
-      product.quantity -= item.quantity;
-      await product.save({ session });
-    }
+//       product.quantity -= item.quantity;
+//       await product.save({ session });
+//     }
 
-    order.status = "completed";
-    order.paymentDate = new Date();
-    await order.save({ session });
+//     order.status = "completed";
+//     order.paymentDate = new Date();
+//     await order.save({ session });
 
-    await session.commitTransaction();
-    session.endSession();
+//     await session.commitTransaction();
+//     session.endSession();
 
-    // Redirect to the frontend /success page with the orderId as a query parameter
-    const frontendSuccessUrl = `http://localhost:3000/success?orderId=${order._id}`;
-    return res.redirect(frontendSuccessUrl);
-  } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
-    console.error("SUCCESS ORDER ERROR:", error);
+//     // Redirect to the frontend /success page with the orderId as a query parameter
+//     const frontendSuccessUrl = `http://localhost:3000/success?orderId=${order._id}`;
+//     return res.redirect(frontendSuccessUrl);
+//   } catch (error) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     console.error("SUCCESS ORDER ERROR:", error);
 
-    // Redirect to an error page or the checkout page with an error message
-    const frontendErrorUrl = `http://localhost:3000/checkout?error=${encodeURIComponent(error.message)}`;
-    return res.redirect(frontendErrorUrl);
-  }
-});
+//     // Redirect to an error page or the checkout page with an error message
+//     const frontendErrorUrl = `http://localhost:3000/checkout?error=${encodeURIComponent(error.message)}`;
+//     return res.redirect(frontendErrorUrl);
+//   }
+// });
 
 
 // router.post("/create-test", async (req, res) => {
