@@ -234,10 +234,9 @@ router.patch("/:id/cancel", async (req, res) => {
 });
 
 router.post("/create", async (req, res) => {
-  const { buyerId, addressId, items } = req.body;
+  const { buyerId, addressId, items, shippingMethod } = req.body;
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  const feeShipping = shippingMethod === "standard" ? 500 : 1500;
 
   try {
     if (!buyerId || !addressId || !items || !Array.isArray(items) || items.length === 0) {
@@ -245,13 +244,13 @@ router.post("/create", async (req, res) => {
     }
 
     // Validate buyerId
-    const buyer = await db.User.findById(buyerId).session(session);
+    const buyer = await db.User.findById(buyerId);
     if (!buyer) {
       throw new Error("Người mua không tồn tại");
     }
 
     // Validate addressId
-    const address = await db.Address.findOne({ _id: addressId, userId: buyerId }).session(session);
+    const address = await db.Address.findOne({ _id: addressId, userId: buyerId });
     if (!address) {
       throw new Error("Địa chỉ không tồn tại hoặc không thuộc về người mua");
     }
@@ -262,13 +261,12 @@ router.post("/create", async (req, res) => {
           throw new Error("Thông tin sản phẩm không hợp lệ");
         }
 
-        const product = await db.Product.findById(item.productId).session(session);
+        const product = await db.Product.findById(item.productId);
         if (!product) {
           throw new Error(`Sản phẩm với ID ${item.productId} không tồn tại`);
         }
 
         const unitPrice = product.price;
-
 
         const orderItem = new db.OrderItem({
           orderId: null,
@@ -281,23 +279,25 @@ router.post("/create", async (req, res) => {
       })
     );
 
-    const totalAmount = orderItems
-      .reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
-      .toFixed(2);
+    const totalAmount = orderItems.reduce(
+      (acc, item) => acc + item.unitPrice * item.quantity,
+      0
+    );
+    const totalPrice = ((totalAmount + feeShipping) / 100).toFixed(2);
 
     const request = new paypal.orders.OrdersCreateRequest();
     request.prefer("return=representation");
     request.requestBody({
       intent: "CAPTURE",
       application_context: {
-        return_url: `http://localhost:9999/orders/success`, // Make sure the token is sent here
+        return_url: `http://localhost:9999/orders/success`,
         cancel_url: "http://localhost:9999/orders/cancel",
       },
       purchase_units: [
         {
           amount: {
             currency_code: "USD",
-            value: totalAmount/100,
+            value: totalAmount / 100,
           },
         },
       ],
@@ -309,34 +309,27 @@ router.post("/create", async (req, res) => {
       throw new Error("Lỗi khi tạo đơn hàng PayPal");
     }
 
-    const newOrder = await db.Order.create(
-      [
-        {
-          buyerId: new mongoose.Types.ObjectId(buyerId),
-          addressId: new mongoose.Types.ObjectId(addressId),
-          orderDate: new Date(),
-          totalPrice: totalAmount,
-          status: "shipping",
-          paypalOrderId: paypalOrder.result.id,
-          items: orderItems.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-          })), // Thêm dòng này
-        },
-      ],
-      { session }
-    );
-    
+    const newOrder = await db.Order.create({
+      buyerId: new mongoose.Types.ObjectId(buyerId),
+      addressId: new mongoose.Types.ObjectId(addressId),
+      orderDate: new Date(),
+      totalPrice: totalPrice,
+      status: "shipping",
+      paypalOrderId: paypalOrder.result.id,
+      items: orderItems.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      })),
+    });
 
+    // Lưu các orderItem
     await Promise.all(
       orderItems.map(async (item) => {
-        item.orderId = newOrder[0]._id;
-        await item.save({ session });
+        item.orderId = newOrder._id;
+        await item.save();
       })
     );
-
-    await session.commitTransaction();
 
     const approvalUrl = paypalOrder.result.links.find(
       (link) => link.rel === "approve"
@@ -344,15 +337,12 @@ router.post("/create", async (req, res) => {
 
     res.status(200).json({
       message: "Đã tạo đơn hàng thành công",
-      order_id: newOrder[0]._id,
+      order_id: newOrder._id,
       paypal_order_id: paypalOrder.result.id,
       approvalUrl,
     });
   } catch (error) {
-    await session.abortTransaction();
     res.status(500).json({ message: error.message });
-  } finally {
-    session.endSession();
   }
 });
 
