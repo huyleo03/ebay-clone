@@ -1,5 +1,7 @@
 const express = require("express");
 const db = require("../models");
+const auctionBidsController = require("../controllers/auctionBidsController");
+const { auth } = require("../middlewares/authMiddleware");
 
 const ApiRouter = express.Router();
 
@@ -7,7 +9,7 @@ const ApiRouter = express.Router();
 ApiRouter.get("/user", async (req, res) => {
   try {
     // Tìm user và populate orders và addresses
-    const user = await db.User.find()
+    const user = await db.User.find();
     // Format response giống với database.json
     // const response = {
     //   id: user._id,
@@ -100,5 +102,21 @@ ApiRouter.get("/product/category/:categoryId", async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
+
+// Auction Bid Routes
+// Get bids by product ID
+ApiRouter.get("/auctionBids", auctionBidsController.getBidsByProductId);
+
+// Create new bid (requires authentication)
+ApiRouter.post("/auctionBids", auth, auctionBidsController.createBid);
+
+// Get user's bid history (requires authentication)
+ApiRouter.get("/user/bids", auth, auctionBidsController.getBidsByUser);
+
+// Update bid status (requires authentication)
+ApiRouter.patch("/auctionBids/:id", auth, auctionBidsController.updateBid);
+
+// Get highest bid for a product
+ApiRouter.get("/auctionBids/highest/:productId", auctionBidsController.getHighestBid);
 
 module.exports = ApiRouter;

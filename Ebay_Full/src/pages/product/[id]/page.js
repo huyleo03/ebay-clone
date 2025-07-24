@@ -3,7 +3,6 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   FiHeart,
   FiShoppingCart,
-  FiClock,
   FiTruck,
   FiShield,
   FiArrowLeft,
@@ -44,46 +43,48 @@ export default function ProductDetail() {
   const [appliedDiscount, setAppliedDiscount] = useState(null);
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const API_BASE_URL = "http://localhost:9999";
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   // Mock additional images for the product
   const productImages =
     product?.images?.length > 0
       ? product.images.map((url, index) => ({ id: index, url }))
       : [{ id: 0, url: "/placeholder.jpg" }];
 
-  // Check if product is in cart
-  const checkItemInCart = async () => {
-    if (!currentUser) return false;
-    try {
-      const response = await fetch(`${API_BASE_URL}/cart`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) return false;
-
-      const cartData = await response.json();
-
-      // Check if product exists in cart items
-      return cartData.items?.some(item =>
-        item.productId === id || item.productId?._id === id
-      ) || false;
-    } catch (error) {
-      console.error("Error checking cart:", error);
-      return false;
-    }
-  };
-
-  // Check if product is in wishlist
-  const checkItemInWishlist = () => {
-    const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    return wishlist.some((item) => item.id === id);
-  };
-
-  // Fetch product data, cart status, and bid history
+  // Fetch product data, cart status
   useEffect(() => {
-    const fetchProductAndCartStatus = async () => {
+    // Check if product is in cart
+    const checkItemInCart = async () => {
+      if (!currentUser) return false;
+      try {
+        const response = await fetch(`${API_BASE_URL}/cart`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) return false;
+
+        const cartData = await response.json();
+
+        // Check if product exists in cart items
+        return (
+          cartData.items?.some(
+            (item) => item.productId === id || item.productId?._id === id
+          ) || false
+        );
+      } catch (error) {
+        console.error("Error checking cart:", error);
+        return false;
+      }
+    };
+
+    // Check if product is in wishlist
+    const checkItemInWishlist = () => {
+      const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+      return wishlist.some((item) => item.id === id);
+    };
+
+    const fetchProduct = async () => {
       try {
         // Fixed: Use the correct API endpoint to fetch a single product by ID
         const response = await fetch(`http://localhost:9999/product/${id}`);
@@ -118,17 +119,6 @@ export default function ProductDetail() {
 
         // Check wishlist status
         setIsWishlist(checkItemInWishlist());
-
-        // Fetch bid history for auction items
-        if (product?.isAuction) {
-          const bidsResponse = await fetch(
-            `http://localhost:9999/auctionBids?productId=${id}`
-          );
-          const bidsData = await bidsResponse.json();
-          setBidHistory(
-            bidsData.sort((a, b) => new Date(b.bidDate) - new Date(a.bidDate))
-          );
-        }
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -136,8 +126,48 @@ export default function ProductDetail() {
       }
     };
 
-    fetchProductAndCartStatus();
-  }, [id, currentUser]);
+    fetchProduct();
+  }, [id, currentUser, token]); // Dependencies cần thiết
+
+  // Tách riêng phần fetch bid history
+  useEffect(() => {
+    if (!product?.isAuction) return;
+
+    const fetchBidHistory = async () => {
+      try {
+        const bidsResponse = await fetch(
+          `http://localhost:9999/auctionBids?productId=${id}`
+        );
+
+        if (bidsResponse.ok) {
+          const bidsData = await bidsResponse.json();
+
+          // Debug logs để xem dữ liệu trả về
+          console.log("Raw bidsData:", bidsData);
+          console.log("Type of bidsData:", typeof bidsData);
+          console.log("Is array?", Array.isArray(bidsData));
+
+          // Kiểm tra bidsData là array trước khi sort
+          if (Array.isArray(bidsData)) {
+            setBidHistory(
+              bidsData.sort((a, b) => new Date(b.bidDate) - new Date(a.bidDate))
+            );
+          } else {
+            console.warn("Bid data is not an array:", bidsData);
+            setBidHistory([]); // Set empty array nếu không phải array
+          }
+        } else {
+          console.error("Failed to fetch bid history:", bidsResponse.status);
+          setBidHistory([]);
+        }
+      } catch (error) {
+        console.error("Error fetching bid history:", error);
+        setBidHistory([]);
+      }
+    };
+
+    fetchBidHistory();
+  }, [id, product?.isAuction]); // Phụ thuộc vào product.isAuction
 
   // Handle cart actions (add/remove)
   const handleCartAction = async () => {
@@ -155,30 +185,31 @@ export default function ProductDetail() {
         const response = await fetch(`${API_BASE_URL}/cart/items/${id}`, {
           method: "DELETE",
           headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to remove item from cart");
+          throw new Error(
+            errorData.message || "Failed to remove item from cart"
+          );
         }
 
         setIsItemAdded(false);
-
       } else {
         // ADD TO CART
         const response = await fetch(`${API_BASE_URL}/cart/items`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             productId: id,
-            quantity: quantity
-          })
+            quantity: quantity,
+          }),
         });
 
         if (!response.ok) {
@@ -197,6 +228,7 @@ export default function ProductDetail() {
   };
 
   // Handle placing a bid
+  // Update the handlePlaceBid function
   const handlePlaceBid = async () => {
     if (!currentUser) {
       alert("Please login to place a bid");
@@ -209,75 +241,63 @@ export default function ProductDetail() {
       return;
     }
 
-    const bidInPennies = Math.round(parseFloat(bidAmount) * 100);
-    if (bidInPennies <= product.price) {
+    const bidValue = parseFloat(bidAmount);
+    const currentBid = product.currentBid || product.price / 100;
+
+    if (bidValue <= currentBid) {
       alert(
-        `Your bid must be higher than the current bid of £${(
-          product.price / 100
-        ).toFixed(2)}`
+        `Your bid must be higher than the current bid of £${currentBid.toFixed(
+          2
+        )}`
       );
       return;
     }
 
     try {
-      // Get current bids to check highest
-      const bidsResponse = await fetch(
-        `http://localhost:9999/auctionBids?productId=${id}`
-      );
-      const existingBids = await bidsResponse.json();
+      // Convert to API expected format (pennies/cents)
+      const bidAmountInPennies = Math.round(bidValue * 100);
 
-      // Create new bid ID
-      const newBidId = `bid${Date.now()}`;
-
-      // Determine if this is winning bid
-      const highestBid =
-        existingBids.length > 0
-          ? Math.max(...existingBids.map((bid) => bid.bidAmount))
-          : product.price;
-      const isWinning = bidInPennies > highestBid;
-
-      // Create new bid record
-      const newBid = {
-        id: newBidId,
+      // Create bid request with proper structure
+      const bidRequest = {
         productId: id,
-        userId: currentUser.id,
-        bidAmount: bidInPennies,
-        bidDate: new Date().toISOString(),
-        isWinningBid: isWinning,
+        bidAmount: bidAmountInPennies,
       };
 
-      // Submit new bid
-      const response = await fetch("http://localhost:9999/auctionBids", {
+      console.log("Sending bid request:", bidRequest);
+      console.log("With token:", token.substring(0, 10) + "...");
+
+      // Submit new bid with authorization header
+      const response = await fetch(`${API_BASE_URL}/auctionBids`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add the auth token
         },
-        body: JSON.stringify(newBid),
+        body: JSON.stringify(bidRequest),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to place bid");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to place bid");
       }
 
-      // Update other bids if this is highest
-      if (isWinning && existingBids.length > 0) {
-        const updatePromises = existingBids.map((bid) =>
-          fetch(`http://localhost:9999/auctionBids/${bid.id}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ isWinningBid: false }),
-          })
-        );
-        await Promise.all(updatePromises);
+      // Refresh bid history after successful bid
+      const bidsResponse = await fetch(
+        `${API_BASE_URL}/auctionBids?productId=${id}`
+      );
+      if (bidsResponse.ok) {
+        const bidsData = await bidsResponse.json();
+        if (Array.isArray(bidsData)) {
+          setBidHistory(
+            bidsData.sort((a, b) => new Date(b.bidDate) - new Date(a.bidDate))
+          );
+        }
       }
-
-      // Update bid history
-      setBidHistory([newBid, ...bidHistory]);
 
       alert("Bid placed successfully!");
       setBidAmount("");
+      console.log("Response status:", response.status);
+      console.log("Response body:", await response.clone().json());
     } catch (error) {
       console.error("Error placing bid:", error);
       alert("Failed to place bid: " + error.message);
@@ -301,23 +321,6 @@ export default function ProductDetail() {
         setIsWishlist(true);
       }
     }
-  };
-
-  // Format time remaining for auction
-  const formatTimeRemaining = () => {
-    // Mock time remaining calculation
-    const days = 2;
-    const hours = 3;
-    const minutes = 45;
-
-    return (
-      <div className="flex items-center text-gray-700">
-        <FiClock className="mr-2" />
-        <span className="font-medium">
-          {days}d {hours}h {minutes}m
-        </span>
-      </div>
-    );
   };
 
   const handleApplyDiscount = (discount) => {
@@ -421,10 +424,11 @@ export default function ProductDetail() {
                   <button
                     key={image.id}
                     onClick={() => setSelectedImage(index)}
-                    className={`flex-shrink-0 w-16 h-16 overflow-hidden border ${selectedImage === index
+                    className={`flex-shrink-0 w-16 h-16 overflow-hidden border ${
+                      selectedImage === index
                         ? "border-[#0053A0]"
                         : "border-gray-200"
-                      }`}
+                    }`}
                   >
                     <img
                       src={`${image.url}/100`}
@@ -586,7 +590,7 @@ export default function ProductDetail() {
 
                         <div className="flex items-center text-xs text-[#0053A0] mt-2">
                           <button
-                            onClick={() => setShowBidHistory(!showBidHistory)}
+                            onClick={() => navigate(`/bidHistory/${id}`)}
                             className="hover:underline flex items-center"
                           >
                             {bidHistory?.length || 0} bids
@@ -662,7 +666,12 @@ export default function ProductDetail() {
                       <div className="text-sm text-gray-500">Price:</div>
                       <div className="flex items-baseline">
                         <div className="text-2xl font-medium text-gray-900">
-                          £{((product.price * (1 - (appliedDiscount?.discount || 0) / 100)) / 100).toFixed(2)}
+                          £
+                          {(
+                            (product.price *
+                              (1 - (appliedDiscount?.discount || 0) / 100)) /
+                            100
+                          ).toFixed(2)}
                         </div>
                         {appliedDiscount && (
                           <div className="ml-2 text-sm text-gray-500 line-through">
@@ -682,7 +691,13 @@ export default function ProductDetail() {
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
                         [Approximately US $
-                        {((product.price * (1 - (appliedDiscount?.discount || 0) / 100) / 100) * 1.25).toFixed(2)}]
+                        {(
+                          ((product.price *
+                            (1 - (appliedDiscount?.discount || 0) / 100)) /
+                            100) *
+                          1.25
+                        ).toFixed(2)}
+                        ]
                       </div>
                     </div>
 
@@ -776,23 +791,44 @@ export default function ProductDetail() {
                           <button
                             onClick={handleCartAction}
                             disabled={isLoading}
-                            className={`w-full flex items-center justify-center px-6 py-2 text-base font-medium text-white ${isItemAdded
+                            className={`w-full flex items-center justify-center px-6 py-2 text-base font-medium text-white ${
+                              isItemAdded
                                 ? "bg-[#e43147] hover:bg-[#c52b3d]"
                                 : "bg-[#0053A0] hover:bg-[#00438A]"
-                              } ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+                            } ${
+                              isLoading ? "opacity-70 cursor-not-allowed" : ""
+                            }`}
                           >
                             {isLoading ? (
                               <span className="flex items-center">
-                                <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                <svg
+                                  className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                  ></circle>
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                  ></path>
                                 </svg>
                                 Processing...
                               </span>
                             ) : (
                               <>
                                 <FiShoppingCart className="mr-2 h-5 w-5" />
-                                {isItemAdded ? "Remove from cart" : "Add to cart"}
+                                {isItemAdded
+                                  ? "Remove from cart"
+                                  : "Add to cart"}
                               </>
                             )}
                           </button>
@@ -802,10 +838,11 @@ export default function ProductDetail() {
                             className="w-full flex items-center justify-center px-6 py-2 border border-gray-300 text-base font-medium text-gray-700 bg-white hover:bg-gray-50"
                           >
                             <FiHeart
-                              className={`mr-2 h-5 w-5 ${isWishlist
+                              className={`mr-2 h-5 w-5 ${
+                                isWishlist
                                   ? "text-[#e43147] fill-[#e43147]"
                                   : ""
-                                }`}
+                              }`}
                             />
                             {isWishlist
                               ? "Remove from watchlist"

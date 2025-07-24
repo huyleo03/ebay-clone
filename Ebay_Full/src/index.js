@@ -23,6 +23,7 @@ import SellerProducts from "./pages/sellerProduct/page";
 import DailyDeals from "./pages/dailyDeal/page";
 import HelpContact from "./pages/help/page";
 import Profile from "./pages/profile/profile";
+import BidHistory from "./pages/bidHistory/[productId]/page";
 import { CartProvider } from "./context/cartContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -50,6 +51,7 @@ root.render(
           <Route path="/daily-deals" element={<DailyDeals />} />
           <Route path="/help" element={<HelpContact />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/bidHistory/:productId" element={<BidHistory />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>

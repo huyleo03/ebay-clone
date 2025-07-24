@@ -6,6 +6,7 @@ const Order = require("./order");
 const User = require("./user");
 const ReturnRequest = require("./returnrequest");
 const Address = require("./address");
+const AuctionBid = require("./auctionBid");
 
 const Coupon = require("./coupon");
 const db = {};
@@ -18,6 +19,7 @@ db.Order = Order;
 db.User = User;
 db.ReturnRequest = ReturnRequest;
 db.Address = Address;
+db.AuctionBid = AuctionBid;
 
 db.Coupon = Coupon;
 module.exports = db;
