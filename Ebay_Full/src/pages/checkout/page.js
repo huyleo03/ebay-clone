@@ -47,7 +47,7 @@ export default function Checkout() {
     const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
     const token = localStorage.getItem("token");
     const isAuthenticated = !!currentUser._id && !!token;
-
+    
     // Get cart items - updated to match cart API structure
     const fetchCartItems = async () => {
         if (!isAuthenticated) {
@@ -223,12 +223,32 @@ export default function Checkout() {
         }
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
+useEffect(() => {
+    const fetchAll = async () => {
+        // Nếu có dữ liệu truyền qua location.state (Buy it now)
+        if (location.state && location.state.items && location.state.items.length > 0) {
+            setCartItems(location.state.items.map(item => ({
+                idProduct: item.id || item._id || item.idProduct,
+                title: item.title,
+                description: item.description || "",
+                // Nếu giá nhỏ hơn 100 thì nhân 100, nếu lớn hơn 100 thì giữ nguyên (đã là pence)
+                price: item.price && item.price > 100 ? item.price : Math.round((item.price || item.buyNowPrice) * 100),
+                url: item.image
+                    ? [item.image]
+                    : (Array.isArray(item.images) ? item.images : (item.images ? [item.images] : (item.url ? [item.url] : []))),
+                quantity: item.quantity || 1,
+                availableStock: item.availableStock || item.stock || 100
+            })));
+            setIsLoading(false);
+            fetchAddressDetails();
+        } else {
+            // Nếu không phải Buy it now thì lấy từ giỏ hàng như cũ
             await Promise.all([fetchCartItems(), fetchAddressDetails()]);
-        };
-        fetchData();
-    }, [currentUser?._id]);
+        }
+    };
+    fetchAll();
+    // eslint-disable-next-line
+}, [currentUser?._id, location.state]);
 
     // Handle PayPal redirect after payment
     // useEffect(() => {
