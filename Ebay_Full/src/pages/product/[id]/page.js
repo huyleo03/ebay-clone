@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   FiHeart,
   FiShoppingCart,
+  FiClock,
   FiTruck,
   FiShield,
   FiArrowLeft,

@@ -44,10 +44,23 @@ ApiRouter.get("/products", async (req, res) => {
       if (!product) {
         return res.status(404).send({ message: "Product not found" });
       }
-      return res.status(200).send([product]);
+      // Đảm bảo có trường url
+      const obj = product.toObject();
+      obj.url = Array.isArray(obj.images) && obj.images.length > 0 ? obj.images[0] : "";
+      obj.id = obj._id?.toString();
+      return res.status(200).send([obj]);
     }
 
-    const products = await db.Product.find().populate("categoryId");
+    let products = await db.Product.find().populate("categoryId");
+    // Đảm bảo mỗi product có trường url và id
+    products = products.map(p => {
+      const obj = p.toObject();
+      return {
+        ...obj,
+        url: Array.isArray(obj.images) && obj.images.length > 0 ? obj.images[0] : "",
+        id: obj._id?.toString()
+      };
+    });
     res.status(200).send(products);
   } catch (error) {
     res.status(500).send({ message: error.message });

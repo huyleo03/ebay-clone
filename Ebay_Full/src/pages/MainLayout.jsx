@@ -20,6 +20,7 @@ import {
   FiShoppingCart,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 // Giả định các component này đã được tạo trong dự án của bạn
 import TopMenu from "../components/TopMenu";
@@ -98,13 +99,17 @@ const FEATURED_BRANDS = [
 
 // Dữ liệu mẫu cho các xu hướng tìm kiếm
 const TRENDING_SEARCHES = [
-  "iPhone 15",
-  "PlayStation 5",
-  "Air Fryer",
-  "Nike Air Jordan",
-  "OLED TV",
-  "Mechanical Keyboard",
-  "Wireless Earbuds",
+  "Laptop",
+  "Lamp",
+  "Camera",
+  "Wallet",
+  "Bag",
+  "Watch",
+  "Phone",
+  "Tablet",
+  "Headphone",
+  "Smart Watch",
+  "Lego Sets",
   "Smart Watch",
   "Lego Sets",
   "Outdoor Furniture",
@@ -164,7 +169,7 @@ const MainPage = () => {
   const [currentBannerSlide, setCurrentBannerSlide] = useState(0);
   const [sortBy, setSortBy] = useState("featured");
   const [showFilters, setShowFilters] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 100]);
   const [wishlist, setWishlist] = useState([]);
   const [isSticky, setIsSticky] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(12);
@@ -172,10 +177,35 @@ const MainPage = () => {
   const [notificationMessage, setNotificationMessage] = useState("");
   const [recentlyViewed, setRecentlyViewed] = useState([]);
 
+  // State bổ sung cho filter tạm thời
+  const [pendingFilters, setPendingFilters] = useState({
+    priceRange: [0, 100],
+    itemCondition: { new: true, used: false, refurbished: false },
+    shipping: { free: true, sameDay: false, returns: false },
+  });
+
+  // Khi mở filter, đồng bộ state tạm với state thực tế
+  useEffect(() => {
+    setPendingFilters({
+      priceRange: priceRange,
+      itemCondition: { new: true, used: false, refurbished: false }, // Có thể đồng bộ thêm nếu bạn có state riêng cho điều kiện
+      shipping: { free: true, sameDay: false, returns: false }, // Có thể đồng bộ thêm nếu bạn có state riêng cho shipping
+    });
+  }, [showFilters]);
+
+  // Hàm xử lý khi bấm nút Lọc
+  const handleApplyFilters = () => {
+    setPriceRange(pendingFilters.priceRange);
+    // Nếu có state riêng cho itemCondition và shipping thì set ở đây
+    setShowFilters(false);
+  };
+
   const bannerRef = useRef(null);
   const categoriesRef = useRef(null);
   const filtersRef = useRef(null);
   const intervalRef = useRef(null); // Thêm ref để quản lý interval của banner
+
+  const navigate = useNavigate();
 
   // Fetch dữ liệu từ API
   useEffect(() => {
@@ -247,14 +277,34 @@ const MainPage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Filter products by category
-  const filteredProducts = selectedCategory
-    ? products.filter(
-        (product) =>
-          String(product.categoryId._id || product.categoryId) ===
-          String(selectedCategory)
-      )
-    : products;
+  // Thay thế filteredProducts:
+  const filteredProducts = products.filter((product) => {
+    // Lọc theo category nếu có
+    if (
+      selectedCategory &&
+      String(product.categoryId._id || product.categoryId) !== String(selectedCategory)
+    ) {
+      return false;
+    }
+    // Lọc theo giá (giả sử product.price là cent, priceRange là đô)
+    if (
+      product.price < priceRange[0] * 100 ||
+      product.price > priceRange[1] * 100
+    ) {
+      return false;
+    }
+    // Nếu có trường condition và filter, có thể bổ sung như sau:
+    // const allowedConditions = [];
+    // if (itemCondition.new) allowedConditions.push('new');
+    // if (itemCondition.used) allowedConditions.push('used');
+    // if (itemCondition.refurbished) allowedConditions.push('refurbished');
+    // if (allowedConditions.length && !allowedConditions.includes(product.condition)) return false;
+    // Nếu có trường shipping, có thể bổ sung như sau:
+    // if (shipping.free && !product.freeShipping) return false;
+    // if (shipping.sameDay && !product.sameDayShipping) return false;
+    // if (shipping.returns && !product.freeReturns) return false;
+    return true;
+  });
 
   // Xử lý sắp xếp sản phẩm
   const getSortedProducts = () => {
@@ -500,6 +550,7 @@ const MainPage = () => {
                 <button
                   key={index}
                   className="bg-white hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded-full text-sm border border-gray-200 transition-colors"
+                  onClick={() => navigate(`/search?query=${encodeURIComponent(search)}`)}
                 >
                   {search}
                 </button>
@@ -568,19 +619,221 @@ const MainPage = () => {
             </div>
           </div>
 
-          {/* Sản phẩm */}
-          <div className="mb-12">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">
-                {selectedCategory
-                  ? `${getCategoryName(selectedCategory)} Products`
-                  : "All Products"}
-              </h2>
-              <div className="text-sm text-gray-500">
-                {filteredProducts.length} results
+          {/* Bộ lọc sản phẩm - di chuyển lên đây */}
+          <div
+            ref={filtersRef}
+            className={`bg-white p-4 rounded-lg shadow-sm mb-6 ${
+              isSticky ? "sticky top-0 z-20 shadow-md" : ""
+            }`}
+          >
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+              <div className="flex items-center mb-4 md:mb-0">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center text-sm font-medium text-gray-700 mr-4"
+                >
+                  <FiFilter className="mr-1 h-4 w-4" />
+                  Filters
+                  <FiChevronDown
+                    className={`ml-1 h-4 w-4 transition-transform ${
+                      showFilters ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-1.5 rounded ${
+                      viewMode === "grid" ? "bg-gray-50" : "bg-white"
+                    }`}
+                  >
+                    <FiGrid className="h-5 w-5 text-gray-700" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-1.5 rounded ${
+                      viewMode === "list" ? "bg-gray-50" : "bg-white"
+                    }`}
+                  >
+                    <FiList className="h-5 w-5 text-gray-700" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center w-full md:w-auto">
+                <div className="text-sm text-gray-500 mr-2">Sort by:</div>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="flex-grow md:flex-grow-0 border-gray-300 rounded-md text-sm focus:ring-[#0053A0] focus:border-[#0053A0] bg-white text-gray-900"
+                >
+                  <option value="featured">Featured</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="newest">Newest First</option>
+                </select>
+
+                <button
+                  onClick={() => {
+                    setSelectedCategory(null);
+                    setPriceRange([0, 100]);
+                    setSortBy("featured");
+                  }}
+                  className="ml-2 flex items-center text-sm text-[#0053A0] hover:underline"
+                >
+                  <FiRefreshCw className="mr-1 h-3 w-3" />
+                  Reset
+                </button>
               </div>
             </div>
 
+            {/* Bộ lọc mở rộng */}
+            {showFilters && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="mt-4 pt-4 border-t border-gray-200"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      Price Range
+                    </h3>
+                    <div className="flex items-center space-x-4">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value={pendingFilters.priceRange[1]}
+                        onChange={(e) => setPendingFilters((prev) => ({
+                          ...prev,
+                          priceRange: [prev.priceRange[0], Number.parseInt(e.target.value)],
+                        }))}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#0053A0]"
+                      />
+                    </div>
+                    <div className="flex justify-between mt-2 text-sm text-gray-600">
+                      <span>${pendingFilters.priceRange[0]}</span>
+                      <span>${pendingFilters.priceRange[1]}</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      Item Condition
+                    </h3>
+                    <div className="space-y-2">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
+                          checked={pendingFilters.itemCondition.new}
+                          onChange={(e) => setPendingFilters((prev) => ({
+                            ...prev,
+                            itemCondition: { ...prev.itemCondition, new: e.target.checked },
+                          }))}
+                        />
+                        <span className="ml-2 text-sm text-gray-700">New</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
+                          checked={pendingFilters.itemCondition.used}
+                          onChange={(e) => setPendingFilters((prev) => ({
+                            ...prev,
+                            itemCondition: { ...prev.itemCondition, used: e.target.checked },
+                          }))}
+                        />
+                        <span className="ml-2 text-sm text-gray-700">Used</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
+                          checked={pendingFilters.itemCondition.refurbished}
+                          onChange={(e) => setPendingFilters((prev) => ({
+                            ...prev,
+                            itemCondition: { ...prev.itemCondition, refurbished: e.target.checked },
+                          }))}
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          Refurbished
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium text-gray-900 mb-2">
+                      Shipping Options
+                    </h3>
+                    <div className="space-y-2">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
+                          checked={pendingFilters.shipping.free}
+                          onChange={(e) => setPendingFilters((prev) => ({
+                            ...prev,
+                            shipping: { ...prev.shipping, free: e.target.checked },
+                          }))}
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          Free Shipping
+                        </span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
+                          checked={pendingFilters.shipping.sameDay}
+                          onChange={(e) => setPendingFilters((prev) => ({
+                            ...prev,
+                            shipping: { ...prev.shipping, sameDay: e.target.checked },
+                          }))}
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          Same Day Shipping
+                        </span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
+                          checked={pendingFilters.shipping.returns}
+                          onChange={(e) => setPendingFilters((prev) => ({
+                            ...prev,
+                            shipping: { ...prev.shipping, returns: e.target.checked },
+                          }))}
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          Free Returns
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end mt-6">
+                  <button
+                    onClick={handleApplyFilters}
+                    className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-semibold shadow"
+                  >
+                    Lọc
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          {/* All Products */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-4">
+              {selectedCategory ? getCategoryName(selectedCategory) : 'All Products'}
+            </h2>
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <svg
@@ -761,182 +1014,6 @@ const MainPage = () => {
                   Next <FiChevronRight className="ml-1" size={12} />
                 </button>
               </div>
-            )}
-          </div>
-
-          {/* Bộ lọc và Sắp xếp */}
-          <div
-            ref={filtersRef}
-            className={`bg-white p-4 rounded-lg shadow-sm mb-6 ${
-              isSticky ? "sticky top-0 z-20 shadow-md" : ""
-            }`}
-          >
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-              <div className="flex items-center mb-4 md:mb-0">
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center text-sm font-medium text-gray-700 mr-4"
-                >
-                  <FiFilter className="mr-1 h-4 w-4" />
-                  Filters
-                  <FiChevronDown
-                    className={`ml-1 h-4 w-4 transition-transform ${
-                      showFilters ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-1.5 rounded ${
-                      viewMode === "grid" ? "bg-gray-50" : "bg-white"
-                    }`}
-                  >
-                    <FiGrid className="h-5 w-5 text-gray-700" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-1.5 rounded ${
-                      viewMode === "list" ? "bg-gray-50" : "bg-white"
-                    }`}
-                  >
-                    <FiList className="h-5 w-5 text-gray-700" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center w-full md:w-auto">
-                <div className="text-sm text-gray-500 mr-2">Sort by:</div>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="flex-grow md:flex-grow-0 border-gray-300 rounded-md text-sm focus:ring-[#0053A0] focus:border-[#0053A0] bg-white text-gray-900"
-                >
-                  <option value="featured">Featured</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="newest">Newest First</option>
-                </select>
-
-                <button
-                  onClick={() => {
-                    setSelectedCategory(null);
-                    setPriceRange([0, 1000]);
-                    setSortBy("featured");
-                  }}
-                  className="ml-2 flex items-center text-sm text-[#0053A0] hover:underline"
-                >
-                  <FiRefreshCw className="mr-1 h-3 w-3" />
-                  Reset
-                </button>
-              </div>
-            </div>
-
-            {/* Bộ lọc mở rộng */}
-            {showFilters && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="mt-4 pt-4 border-t border-gray-200"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <h3 className="font-medium text-gray-900 mb-2">
-                      Price Range
-                    </h3>
-                    <div className="flex items-center space-x-4">
-                      <input
-                        type="range"
-                        min="0"
-                        max="1000"
-                        step="10"
-                        value={priceRange[1]}
-                        onChange={(e) =>
-                          setPriceRange([
-                            priceRange[0],
-                            Number.parseInt(e.target.value),
-                          ])
-                        }
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#0053A0]"
-                      />
-                    </div>
-                    <div className="flex justify-between mt-2 text-sm text-gray-600">
-                      <span>${priceRange[0]}</span>
-                      <span>${priceRange[1]}</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-gray-900 mb-2">
-                      Item Condition
-                    </h3>
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
-                          defaultChecked
-                        />
-                        <span className="ml-2 text-sm text-gray-700">New</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">Used</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">
-                          Refurbished
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="font-medium text-gray-900 mb-2">
-                      Shipping Options
-                    </h3>
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
-                          defaultChecked
-                        />
-                        <span className="ml-2 text-sm text-gray-700">
-                          Free Shipping
-                        </span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">
-                          Same Day Shipping
-                        </span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 text-[#0053A0] focus:ring-[#0053A0]"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">
-                          Free Returns
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
             )}
           </div>
 
