@@ -1,0 +1,166 @@
+[{
+  "_id": {
+    "$oid": "6880f3c7783ce81a7dfe1403"
+  },
+  "orderId": {
+    "$oid": "6807611ee5ac5920a68061c8"
+  },
+  "userId": {
+    "$oid": "6880e90e783ce81a7dfd96f2"
+  },
+  "reason": "không thích",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-07-23T14:37:59.140Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6706c540be090ec1c08abf95"
+  },
+  "orderId": {
+    "$oid": "6706c540be090ec1c08abf91"
+  },
+  "userId": {
+    "$oid": "6706c540be090ec1c08abf87"
+  },
+  "reason": "Sản phẩm không đúng mô tả",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2024-03-16T10:00:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6706c540be090ec1c08abf97"
+  },
+  "orderId": {
+    "$oid": "6706c540be090ec1c08abf93"
+  },
+  "userId": {
+    "$oid": "6706c540be090ec1c08abf87"
+  },
+  "reason": "Không vừa size",
+  "status": "rejected",
+  "createdAt": {
+    "$date": "2024-03-14T09:15:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6706c540be090ec1c08abf96"
+  },
+  "orderId": {
+    "$oid": "6706c540be090ec1c08abf92"
+  },
+  "userId": {
+    "$oid": "6706c540be090ec1c08abf88"
+  },
+  "reason": "Sản phẩm bị hỏng",
+  "status": "approved",
+  "createdAt": {
+    "$date": "2024-03-15T15:30:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68047c5ab8b6188ecb89db33"
+  },
+  "orderId": {
+    "$oid": "6706c540be090ec1c08abf92"
+  },
+  "userId": {
+    "$oid": "6706c540be090ec1c08abf88"
+  },
+  "reason": "toi khong thich",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-04-20T04:47:22.827Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6804836f6a191861a61461bd"
+  },
+  "orderId": {
+    "$oid": "6706c540be090ec1c08abf92"
+  },
+  "userId": {
+    "$oid": "6706c540be090ec1c08abf88"
+  },
+  "reason": "toi khong thich",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-04-20T05:17:35.463Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680c6ea9e87853934039006b"
+  },
+  "orderId": {
+    "$oid": "680c6ea9e878539340390063"
+  },
+  "userId": {
+    "$oid": "680c6ea9e87853934039005b"
+  },
+  "reason": "Sản phẩm không đúng như mô tả",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2023-12-26T09:15:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "680c88bd2f4a5b547ad48eae"
+  },
+  "orderId": {
+    "$oid": "680c6ea9e878539340390061"
+  },
+  "userId": {
+    "$oid": "680c6ea9e87853934039005b"
+  },
+  "reason": "ko thich",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-04-26T07:18:21.177Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680dbe6ff4c3889dfa94aacb"
+  },
+  "orderId": {
+    "$oid": "680c6ea9e878539340390063"
+  },
+  "userId": {
+    "$oid": "680c6ea9e87853934039005b"
+  },
+  "reason": "toi khong ung san pham",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-04-27T05:19:43.830Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "680dce8a0e71408c41fcecfb"
+  },
+  "orderId": {
+    "$oid": "680c6ea9e878539340390060"
+  },
+  "userId": {
+    "$oid": "680c6ea9e87853934039005b"
+  },
+  "reason": "toi khong ung",
+  "status": "pending",
+  "createdAt": {
+    "$date": "2025-04-27T06:28:26.625Z"
+  },
+  "__v": 0
+}]
