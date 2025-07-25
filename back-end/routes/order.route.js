@@ -266,7 +266,7 @@ router.post("/create", async (req, res) => {
           throw new Error(`Sản phẩm với ID ${item.productId} không tồn tại`);
         }
 
-        const unitPrice = product.price;
+        const unitPrice = typeof item.price === "number" ? item.price : product.price;
 
         const orderItem = new db.OrderItem({
           orderId: null,
@@ -279,10 +279,7 @@ router.post("/create", async (req, res) => {
       })
     );
 
-    const totalAmount = orderItems.reduce(
-      (acc, item) => acc + item.unitPrice * item.quantity,
-      0
-    );
+const totalAmount = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const totalPrice = ((totalAmount + feeShipping) / 100).toFixed(2);
 
     const request = new paypal.orders.OrdersCreateRequest();
@@ -297,7 +294,7 @@ router.post("/create", async (req, res) => {
         {
           amount: {
             currency_code: "USD",
-            value: totalAmount / 100,
+            value: ((totalAmount + feeShipping) / 100).toFixed(2), // ĐÃ CỘNG PHÍ SHIP!
           },
         },
       ],

@@ -3,7 +3,6 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   FiHeart,
   FiShoppingCart,
-  FiClock,
   FiTruck,
   FiShield,
   FiArrowLeft,
@@ -310,12 +309,23 @@ const handleBuyItNow = () => {
     navigate("/auth");
     return;
   }
+
+  // Lấy giá bid cao nhất (giá lớn nhất trong bidHistory), nếu chưa có ai bid thì lấy giá khởi điểm
+  let highestBid = product.price;
+  if (Array.isArray(bidHistory) && bidHistory.length > 0) {
+    highestBid = Math.max(...bidHistory.map(bid => bid.bidAmount));
+  }
+
+  // Nếu có buyNowPrice và nó lớn hơn highestBid thì ưu tiên buyNowPrice, còn không thì lấy highestBid
+  const buyNowPrice = product.buyNowPrice && product.buyNowPrice > highestBid
+    ? product.buyNowPrice
+    : highestBid;
+
   const buyNowProduct = {
     id: product._id || product.id,
     title: product.title,
     description: product.description || "",
-    // Giá buy now là số thực (ví dụ: 24.99), checkout sẽ tự nhân 100 nếu cần
-    price: ((product.price * 1.2) / 100),
+    price: buyNowPrice, // Giá đúng là giá bid cao nhất hoặc buyNowPrice nếu lớn hơn
     image: Array.isArray(product.images) ? product.images[0] : (product.images || product.image || "/placeholder.jpg"),
     quantity: 1,
     availableStock: product.quantity || 100
@@ -390,6 +400,11 @@ const handleBuyItNow = () => {
       </div>
     );
   }
+
+  let highestBid = product.price;
+if (Array.isArray(bidHistory) && bidHistory.length > 0) {
+  highestBid = Math.max(...bidHistory.map(bid => bid.bidAmount));
+}
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -591,9 +606,14 @@ const handleBuyItNow = () => {
                             <div className="text-sm text-gray-500">
                               Buy it now:
                             </div>
-                            <div className="text-xl font-medium text-gray-900">
-                              £{((product.price * 1.2) / 100).toFixed(2)}
-                            </div>
+                              <div className="text-xl font-medium text-gray-900">
+                                £{(
+                                  (product.buyNowPrice && product.buyNowPrice > highestBid
+                                    ? product.buyNowPrice
+                                    : highestBid
+                                  ) / 100
+                                ).toFixed(2)}
+                              </div>
                             <div className="text-xs text-gray-500 mt-1">
                               [Approximately US $
                               {(((product.price * 1.2) / 100) * 1.25).toFixed(

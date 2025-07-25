@@ -174,68 +174,47 @@ useEffect(() => {
         return shippingRates[shippingMethod] || 0;
     };
 
-    const getOrderTotal = () => {
-        return getCartTotal() + getShippingFee();
-    };
+const getOrderTotal = () => {
+    const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    const shippingFee = shippingRates[shippingMethod]; // phí ship hiện tại
+    return subtotal + shippingFee;
+};
 
-    const handlePayment = async () => {
-        if (!isAuthenticated) {
-            alert("Please login to checkout");
-            navigate("/auth");
-            return;
-        }
+const handlePayment = async () => {
+    try {
+        const orderTotal = getOrderTotal();
 
-        if (cartItems.length === 0) {
-            alert("Your cart is empty!");
-            return;
-        }
+        const response = await fetch("http://localhost:9999/orders/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                buyerId: currentUser._id,
+                addressId,
+                items: cartItems.map(item => ({
+                    productId: item.idProduct || item.productId || item.id || item._id,
+                    quantity: item.quantity,
+                    price: item.price, // đảm bảo giá được truyền đúng
+                })),
+                shippingMethod, // truyền đúng "standard" hoặc "express"
+                orderTotal: (orderTotal / 100).toFixed(2),
+            }),
+        });
 
-        if (!addressId) {
-            alert("Please provide a valid shipping address");
-            navigate("/address");
-            return;
-        }
+        const result = await response.json();
 
-        const orderItems = cartItems.map(item => ({
-            productId: item.idProduct.toString(),
-            quantity: item.quantity,
-        }));
-
-        const orderData = {
-            buyerId: currentUser._id,
-            addressId: addressId,
-            items: orderItems,
-            shippingMethod: shippingMethod,
-        };
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/orders/create`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(orderData),
-            });
-
-            const result = await response.json();
-
-            if (!response.ok || !result.approvalUrl) {
-                throw new Error(result.message || "Failed to create PayPal order");
-            }
-
-            localStorage.setItem("pendingOrder", JSON.stringify({
-                cartItems,
-                addressDetails,
-                orderTotal: getOrderTotal(),
-            }));
-
+        if (result && result.approvalUrl) {
             window.location.href = result.approvalUrl;
-        } catch (error) {
-            console.error("Payment error:", error);
-            alert(`Error creating order: ${error.message}`);
+        } else {
+            throw new Error(result.message || "Không lấy được đường dẫn PayPal");
         }
-    };
+    } catch (error) {
+        alert("Lỗi khi tạo đơn hàng PayPal: " + error.message);
+        console.error(error);
+    }
+};
 
     if (!isAuthenticated) {
         return (
