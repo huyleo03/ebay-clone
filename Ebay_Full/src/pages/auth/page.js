@@ -36,14 +36,14 @@ export default function AuthPage() {
   const sendVerificationEmail = useCallback(async (email, verificationCode) => {
     try {
       const response = await emailjs.send(
-        "service_57aiq9p",
-        "template_vgb4pph",
+        "service_nrr3tw2",
+        "template_abotd4t",
         {
-          to_email: email.toLowerCase().trim(),
+          to: email.toLowerCase().trim(),
           subject: "Xác Nhận Đăng Ký Tài Khoản",
-          verification_code: verificationCode,
+          message: verificationCode,
         },
-        "s1NkKWtFWDZzlqjGM"
+        "OEj4kkgxdJXtWCV0_"
       );
       console.log(`Verification email sent to ${email}:`, response);
       return true;
